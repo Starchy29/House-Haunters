@@ -17,6 +17,7 @@ public abstract class Move
 {
     public enum Targets {
         Allies,
+        Damagable,
         Enemies,
         UnaffectedFloor,
         StandableSpot,
@@ -37,6 +38,7 @@ public abstract class Move
     private delegate bool FilterCheck(Monster user, Vector2Int tile);
     private static Dictionary<Targets, FilterCheck> TargetFilters = new Dictionary<Targets, FilterCheck>() {
         { Targets.Allies, IsAllyOn },
+        { Targets.Damagable, IsDestructibleOn },
         { Targets.Enemies, IsEnemyOn },
         { Targets.UnaffectedFloor, IsFloorAt },
         { Targets.StandableSpot, IsStandable },
@@ -107,6 +109,11 @@ public abstract class Move
     public static bool IsEnemyOn(Monster user, Vector2Int tile) {
         Monster monster = LevelGrid.Instance.GetMonster(tile);
         return monster != null && monster.Controller != user.Controller;
+    }
+
+    public static bool IsDestructibleOn(Monster user, Vector2Int tile) {
+        GridEntity entity = LevelGrid.Instance.GetEntity(tile);
+        return entity != null && entity is Destructible && entity.Controller != user.Controller;
     }
 
     public static bool IsFloorAt(Monster user, Vector2Int tile) {

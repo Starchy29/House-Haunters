@@ -10,19 +10,19 @@ public class Attack : Move
     private HitTrigger OnHit;
 
     public Attack(string name, int cooldown, int damage, ISelector selection, AnimationQueuer effectAnimation, string description = "", HitTrigger hitEffect = null) 
-        : base(name, cooldown, MoveType.Attack, Targets.Enemies, selection, effectAnimation, description)
+        : base(name, cooldown, MoveType.Attack, Targets.Damagable, selection, effectAnimation, description)
     {
         Damage = damage;
         OnHit = hitEffect;
     }
 
     protected override void ApplyEffect(Monster user, Vector2Int tile) {
-        Monster hitMonster = LevelGrid.Instance.GetMonster(tile);
+        Destructible hitMonster = (Destructible)LevelGrid.Instance.GetEntity(tile);
         int startHealth = hitMonster.Health;
         hitMonster.TakeDamage(Mathf.FloorToInt(Damage * user.DamageMultiplier), user);
 
-        if(OnHit != null) {
-            OnHit(user, hitMonster, hitMonster.Health < startHealth ? startHealth - hitMonster.Health : 0);
+        if(OnHit != null && hitMonster is Monster) {
+            OnHit(user, (Monster)hitMonster, hitMonster.Health < startHealth ? startHealth - hitMonster.Health : 0);
         }
     }
 }

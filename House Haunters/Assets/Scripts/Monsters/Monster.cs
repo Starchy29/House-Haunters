@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Monster : GridEntity
+public class Monster : Destructible
 {
     [SerializeField] private HealthBarScript healthBar;
-    public MonsterName MonsterType { get; set; }
+    public MonsterName MonsterType;
 
     public MonsterType Stats { get; private set; }
-    public int Health { get; private set; }
 
     private Dictionary<StatusEffect, int> effectDurations;
 
@@ -24,10 +23,10 @@ public class Monster : GridEntity
     public int CurrentSpeed { get { return Stats.Speed + (HasStatus(StatusEffect.Haste) ? 2 : 0) + (HasStatus(StatusEffect.Slowness) ? -2 : 0); } }
     public float DamageMultiplier { get { return 1f + (HasStatus(StatusEffect.Strength)? 0.5f : 0f) + (HasStatus(StatusEffect.Fear)? -0.5f : 0f); } }
 
-    void Start() {
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        renderer.sprite = PrefabContainer.Instance.monsterToSprite[MonsterType];
-        renderer.material.color = Controller.TeamColor;
+    public override void Start() {
+        base.Start();
+        Controller.Join(this);
+        GetComponent<SpriteRenderer>().sprite = PrefabContainer.Instance.monsterToSprite[MonsterType];
 
         Stats = MonstersData.Instance.GetMonsterData(MonsterType);
         
@@ -68,7 +67,7 @@ public class Monster : GridEntity
         AnimationsManager.Instance.QueueAnimation(new HealthBarAnimator(healthBar));
     }
 
-    public void TakeDamage(int amount, Monster source) {
+    public override void TakeDamage(int amount, Monster source) {
         if(source != null) {
             float multiplier = 1f;
             if(HasStatus(StatusEffect.Haunted)) {

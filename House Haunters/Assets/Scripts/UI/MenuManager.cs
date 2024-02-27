@@ -9,11 +9,12 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject TileSelector;
     [SerializeField] private MoveMenu moveMenu;
+    [SerializeField] private BuyMenu buyMenu;
     [SerializeField] private AutoButton endTurnButton;
 
     public bool UseKBMouse { get; set; }
 
-    private enum SelectionTarget { Monster, Move, Targets }
+    private enum SelectionTarget { Monster, Move, Targets, CraftChoice }
     private SelectionTarget state;
     
     private LevelGrid level;
@@ -44,7 +45,7 @@ public class MenuManager : MonoBehaviour
         InputManager input = InputManager.Instance;
         Vector2 mousePos = InputManager.Instance.GetMousePosition();
 
-        endTurnButton.Disabled = GameManager.Instance.CurrentTurn != controller || AnimationsManager.Instance.Animating || state == SelectionTarget.Targets;
+        endTurnButton.disabled = GameManager.Instance.CurrentTurn != controller || AnimationsManager.Instance.Animating || state == SelectionTarget.Targets;
 
         switch(state) {
             case SelectionTarget.Monster:
@@ -64,6 +65,22 @@ public class MenuManager : MonoBehaviour
                 TileSelector.SetActive(false); // hide cursor when over menu
                 if(!Global.GetObjectArea(moveMenu.Background).Contains(mousePos)) {
                     // if not hovering the move menu, check if selecting a different monster
+                    UpdateMonsterSelector(mousePos);
+                }
+                break;
+
+            case SelectionTarget.CraftChoice:
+                // buttons update themselves
+
+                if(input.BackPressed()) {
+                    state = SelectionTarget.Monster;
+                    buyMenu.gameObject.SetActive(false);
+                    break;
+                }
+
+                TileSelector.SetActive(false); // hide cursor when over menu
+                if(!Global.GetObjectArea(moveMenu.Background).Contains(mousePos)) {
+                    // if not hovering the craft menu, check if selecting a different monster
                     UpdateMonsterSelector(mousePos);
                 }
                 break;
@@ -115,6 +132,12 @@ public class MenuManager : MonoBehaviour
         level.ColorTiles(null, TileHighlighter.State.Highlighted);
     }
 
+    public void OpenCraftMenu() {
+        state = SelectionTarget.CraftChoice;
+        moveMenu.gameObject.SetActive(false);
+        buyMenu.gameObject.SetActive(true);
+    }
+
     private void UpdateMonsterSelector(Vector2 mousePos) {
         TileSelector.SetActive(false);
         Vector3Int tile = level.Tiles.WorldToCell(mousePos);
@@ -127,10 +150,11 @@ public class MenuManager : MonoBehaviour
 
         Monster hovered = level.GetMonster((Vector2Int)tile);
         if(hovered == null) {
-            // close move menu when clicking off of it
+            // close a menu when clicking off of it
             if(InputManager.Instance.SelectPressed()) {
                 state = SelectionTarget.Monster;
                 moveMenu.gameObject.SetActive(false);
+                buyMenu.gameObject.SetActive(false);
             }
             return;
         }

@@ -25,11 +25,11 @@ public class GameManager : MonoBehaviour
 
     void Start() {
         animator = AnimationsManager.Instance;
-        SpawnMonster(MonsterName.Demon, Vector2Int.zero, PlayerTeam);
-        SpawnMonster(MonsterName.LostSoul, new Vector2Int(0, 1), PlayerTeam);
+        //SpawnMonster(MonsterName.Demon, Vector2Int.zero, PlayerTeam);
+        //SpawnMonster(MonsterName.LostSoul, new Vector2Int(0, 1), PlayerTeam);
 
-        SpawnMonster(MonsterName.Demon, new Vector2Int(4, 4), EnemyTeam);
-        SpawnMonster(MonsterName.LostSoul, new Vector2Int(4, 5), EnemyTeam);
+        //SpawnMonster(MonsterName.Demon, new Vector2Int(4, 4), EnemyTeam);
+        //SpawnMonster(MonsterName.LostSoul, new Vector2Int(4, 5), EnemyTeam);
 
         CurrentTurn = PlayerTeam;
     }
@@ -51,13 +51,13 @@ public class GameManager : MonoBehaviour
         CurrentTurn.StartTurn();
     }
 
-    public void SpawnMonster(MonsterName monsterType, Vector2Int startTile, Team controller) {
-        Monster spawned = Instantiate(PrefabContainer.Instance.BaseMonsterPrefab).GetComponent<Monster>();
-        spawned.MonsterType = monsterType;
-        LevelGrid.Instance.PlaceEntity(spawned.GetComponent<GridEntity>(), startTile);
-        spawned.transform.position = LevelGrid.Instance.Tiles.GetCellCenterWorld((Vector3Int)startTile);
-        controller.Join(spawned.GetComponent<Monster>());
-    }
+    //public void SpawnMonster(MonsterName monsterType, Vector2Int startTile, Team controller) {
+    //    Monster spawned = Instantiate(PrefabContainer.Instance.BaseMonsterPrefab).GetComponent<Monster>();
+    //    spawned.MonsterType = monsterType;
+    //    LevelGrid.Instance.PlaceEntity(spawned.GetComponent<GridEntity>(), startTile);
+    //    spawned.transform.position = LevelGrid.Instance.Tiles.GetCellCenterWorld((Vector3Int)startTile);
+    //    controller.Join(spawned.GetComponent<Monster>());
+    //}
 
     // removes the monster from the game state. Destroy the game object is handled by the DeathAnimator
     public void DefeatMonster(Monster defeated) {

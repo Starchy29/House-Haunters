@@ -8,6 +8,7 @@ public class Team
 {
     public Color TeamColor { get; private set; }
     public List<Monster> Teammates { get; private set; }
+    public Cauldron SpawnCauldron { get; set; }
     public Dictionary<Ingredient, int> Resources { get; private set; }
     public event Trigger OnTurnEnd;
     public event Trigger OnTurnStart;
@@ -55,5 +56,9 @@ public class Team
         OnTurnEnd?.Invoke();
 
         GameManager.Instance.PassTurn(this);
+    }
+
+    public void Lose() {
+
     }
 }

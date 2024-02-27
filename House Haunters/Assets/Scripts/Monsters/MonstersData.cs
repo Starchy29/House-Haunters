@@ -78,7 +78,7 @@ public class MonstersData
 
     private void DealSplashDamage(Monster attacker, Vector2Int center, int damage) {
         List<Monster> targets = LevelGrid.Instance.GetTilesInRange(center, 1, true)
-            .Filter((Vector2Int tile) => { return Move.IsEnemyOn(attacker, tile); })
+            .Filter((Vector2Int tile) => { return Move.IsDestructibleOn(attacker, tile); })
             .Map((Vector2Int tile) => { return LevelGrid.Instance.GetMonster(tile); });
 
         foreach(Monster target in targets) {
